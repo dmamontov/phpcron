@@ -1,5 +1,5 @@
-*/2 * * * * php /var/www/data/public/cron/test.php test1
-*/5 * * * * php /var/www/data/public/cron/test.php test2
+#*/2 * * * * php /var/www/data/public/cron/test.php test1
+#*/5 * * * * php /var/www/data/public/cron/test.php test2
 #*/1 * * * * /path/to/php /path/to/intaro/app.php -e history
 #0-59/2 */12  * * * /path/to/php /path/to/intaro/app.php -e icml
 #1-36 5 4-10 0-3 * echo "HELLO"

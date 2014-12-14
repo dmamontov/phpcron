@@ -102,12 +102,6 @@ class CronDaemon
     {
         $debugParams = array();
         $pid = pcntl_fork();
-        if ($this->debug) {
-            $debugParams = array(
-                'id'   => $id,
-                'pid'  => getmypid()
-            );
-        }
         $currentDate = array(
             "min"   => intval($currentDate->format("i")),
             "hour"  => intval($currentDate->format("H")),
@@ -123,20 +117,14 @@ class CronDaemon
             $this->currentTask[$pid] = true;
             $this->lastRun[ $id ] = $currentDate;
         } else {
-            if ($this->debug) {
-                $debugParams["point"] = "begin";
-                $debugParams["memory"] = round(memory_get_usage()/1024/1024, 2);
-                $debugParams["time"] = microtime(true);
-                $this->logger('debug', $debugParams);
-            }
             if ($this->checkTask($task, $id, $currentDate)) {
                 exec($task["cmd"]);
-            }
-            if ($this->debug) {
-                $debugParams["point"] = "end";
-                $debugParams["memory"] = round(memory_get_usage()/1024/1024, 2) - $debugParams["memory"];
-                $debugParams["time"] = microtime(true) - $debugParams["time"];
-                $this->logger('debug', $debugParams);
+                $params = array(
+                    'pid'  => getmypid(),
+                    'date' => date("Y-m-d H:i:s"),
+                    'cmd'  => $task["cmd"]
+                );
+                $this->logger('daemon', $params);
             }
             exit();
         }
@@ -319,14 +307,9 @@ class CronDaemon
     private function logger($type, $params)
     {
         switch ($type) {
-            case 'debug':
-                $duration = $params["time"];
-                $hours = (int)($duration/60/60);
-                $minutes = (int)($duration/60)-$hours*60;
-                $seconds = (int)$duration-$hours*60*60-$minutes*60;
-                $path = dirname(__FILE__) . '/../../logs/' . $this->settings['logs']['debug'];
-                error_log("\n[" . $params["pid"] . "]\n" .
-                        $params["point"] . "-" . $params["id"] . ": [" . $seconds . "сек] [" . $params["memory"] . "MB]", 3, $path);
+            case 'daemon':
+                $path = dirname(__FILE__) . '/../../logs/' . $this->settings['logs']['daemon'];
+                error_log($params["date"] . " PID[" . $params["pid"] . "]: CMD (" . $params["cmd"] . ")\n", 3, $path);
                 break;
         }
     }
