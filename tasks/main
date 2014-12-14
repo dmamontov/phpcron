@@ -1,0 +1,9 @@
+*/2 * * * * php /var/www/data/public/cron/test.php test1
+*/5 * * * * php /var/www/data/public/cron/test.php test2
+#*/1 * * * * /path/to/php /path/to/intaro/app.php -e history
+#0-59/2 */12  * * * /path/to/php /path/to/intaro/app.php -e icml
+#1-36 5 4-10 0-3 * echo "HELLO"
+#* 0,2,4,6,8,10,12,14,16,18,20,22 * * sat echo "HELLO"
+#* 0-23/2 * * sat echo "HELLO"
+#1,2,8,1,2,8,18,2,8,1,2,8 23 31 dec * echo "Happy new year"
+#5 23 31 dec * echo "Happy new year"
