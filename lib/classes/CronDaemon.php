@@ -96,7 +96,6 @@ class CronDaemon extends CronEntries implements DaemonInterface
         } elseif ($pid) {
             exit();
         } elseif (is_array($this->tasks) && count($this->tasks) > 0) {
-
             CronTools::setName("cron-daemon");
 
             while (!$this->stopServer) {
