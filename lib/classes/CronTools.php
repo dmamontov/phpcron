@@ -16,7 +16,10 @@ class CronTools
                 break;
             case 'error':
                 $path = dirname(__FILE__) . '/../../logs/' . $settings['logs']['error'];
-                error_log(date("Y-m-d H:i:s") . " PID[" . getmypid() . "]: CMD (" . $params["cmd"] . ") ERROR (" . $params["msg"] . ")\n", 3, $path);
+                $error = date("Y-m-d H:i:s") . " PID[" . getmypid() . "]: ";
+                $error .= "CMD (" . $params["cmd"] . ") ";
+                $error .= "ERROR (" . $params["msg"] . ")\n";
+                error_log($error, 3, $path);
                 break;
         }
     }

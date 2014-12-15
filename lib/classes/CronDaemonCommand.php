@@ -56,6 +56,7 @@ class CronDaemonCommand
         if (shm_has_var($shmId, self::STATUS) && shm_get_var($shmId, self::STATUS)) {
             shm_put_var($shmId, 1, false);
         }
+        sleep(1);
         exit();
     }
 

@@ -75,30 +75,34 @@ abstract class CronEntries
             if ($type == "year") {
                 continue;
             }
-    
+
             if (($type == "month" || $type == "dow") && is_string($task[ $type ])
-                   && array_key_exists($task[ $type ], $this->txtParams[ $type ])) {
+                    && array_key_exists($task[ $type ], $this->txtParams[ $type ])) {
                 $task[ $type ] = $this->txtParams[ $type ][ $task[ $type ] ];
             }
-    
+
             // example: *
             if ($task[ $type ] == "*") {
                 continue;
             }
-    
+
             // example: 23
             if (is_numeric($task[ $type ]) && (int) $task[ $type ] <= $this->txtParams["max"][ $type ]
-                   && $value == (int) $task[ $type ]) {
-                if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ]) && (!isset($this->txtParams["parent"][ $type ])
-                       || $this->lastRun[ $id ][ $this->txtParams["parent"][ $type ] ] != $date[ $this->txtParams["parent"][ $type ] ]))) {
+                    && $value == (int) $task[ $type ]) {
+                if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ])
+                       && (!isset($this->txtParams["parent"][ $type ])
+                       || $this->lastRun[ $id ][ $this->txtParams["parent"][ $type ] ]
+                       != $date[ $this->txtParams["parent"][ $type ] ]))) {
                     continue;
                 }
             }
     
             // example: */15
             if (preg_match("/^\*\/(\d+)$/", $task[ $type ], $out)) {
-                if (is_numeric($out[1]) && (int) $out[1] <= $this->txtParams["max"][ $type ] && ($value % (int) $out[1]) == 0) {
-                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ]) && $this->lastRun[ $id ][ $type ] != $value)) {
+                if (is_numeric($out[1]) && (int) $out[1] <= $this->txtParams["max"][ $type ]
+                        && ($value % (int) $out[1]) == 0) {
+                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ])
+                            && $this->lastRun[ $id ][ $type ] != $value)) {
                         continue;
                     }
                 }
@@ -107,8 +111,10 @@ abstract class CronEntries
             // example: 5-15
             if (preg_match("/^(\d+)\-(\d+)$/", $task[ $type ], $out)) {
                 if (is_numeric($out[1]) && is_numeric($out[2]) && (int) $out[1] <= $this->txtParams["max"][ $type ]
-                       && $out[2] <= $this->txtParams["max"][ $type ] && $out[2] > $out[1] && $value >= $out[1] && $value <= $out[2]) {
-                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ]) && $this->lastRun[ $id ][ $type ] != $value)) {
+                        && $out[2] <= $this->txtParams["max"][ $type ] && $out[2] > $out[1] && $value >= $out[1]
+                        && $value <= $out[2]) {
+                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ])
+                            && $this->lastRun[ $id ][ $type ] != $value)) {
                         continue;
                     }
                 }
@@ -116,10 +122,13 @@ abstract class CronEntries
     
             // example: 5-15/2
             if (preg_match("/^(\d+)\-(\d+)\/(\d+)$/", $task[ $type ], $out)) {
-                if (is_numeric($out[1]) && is_numeric($out[2]) && is_numeric($out[3]) && (int) $out[1] <= $this->txtParams["max"][ $type ] &&
-                       $out[2] <= $this->txtParams["max"][ $type ] && $out[3] <= $this->txtParams["max"][ $type ] &&
-                       $out[2] > $out[1] && $value >= $out[1] && $value <= $out[2] && ($value % (int) $out[3]) == 0) {
-                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ]) && $this->lastRun[ $id ][ $type ] != $value)) {
+                if (is_numeric($out[1]) && is_numeric($out[2]) && is_numeric($out[3])
+                        && (int) $out[1] <= $this->txtParams["max"][ $type ]
+                        && $out[2] <= $this->txtParams["max"][ $type ] && $out[3] <= $this->txtParams["max"][ $type ]
+                        && $out[2] > $out[1] && $value >= $out[1] && $value <= $out[2]
+                        && ($value % (int) $out[3]) == 0) {
+                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ])
+                            && $this->lastRun[ $id ][ $type ] != $value)) {
                         continue;
                     }
                 }
@@ -130,7 +139,8 @@ abstract class CronEntries
             if (count($out) > 1 && in_array($value, $out)) {
                 $key = array_search($value, $out);
                 if (is_numeric($out[ $key ]) && (int) $out[ $key ] <= $this->txtParams["max"][ $type ]) {
-                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ]) && $this->lastRun[ $id ][ $type ] != $value)) {
+                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ])
+                            && $this->lastRun[ $id ][ $type ] != $value)) {
                         continue;
                     }
                 }
