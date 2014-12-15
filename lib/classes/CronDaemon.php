@@ -49,6 +49,11 @@ class CronDaemon extends CronEntries implements DaemonInterface
     {
         CronDaemonCommand::run($arg, __FILE__);
 
+        if (!extension_loaded('pcntl')) {
+            echo "Starting the daemon can not: Do not set the library \"pcntl\"";
+            exit();
+        }
+
         if (version_compare(phpversion(), '5.3.0', '>=')) {
             pcntl_signal_dispatch();
         } else {
