@@ -3,6 +3,7 @@ class Autoloader
 {
     static private $autoloadPaths = array(
         'classes/*',
+        'interfaces/*'
     );
 
     public static function register()

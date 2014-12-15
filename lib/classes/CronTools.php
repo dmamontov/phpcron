@@ -1,6 +1,12 @@
 <?php
 class CronTools
 {
+    /*
+     * Logging results
+     * @param $type string - Type of log
+     * @param $params array - Parameters
+     * @param $settings array - General Settings
+     */
     public static function logger($type, $params, $settings)
     {
         switch ($type) {
@@ -15,6 +21,11 @@ class CronTools
         }
     }
 
+    /*
+     * Formatting Dates
+     * @param $date DateTime - Date
+     * @return array - The formatted date
+     */
     public static function formatDateTime($date)
     {
         if ($date instanceof DateTime) {
@@ -28,6 +39,19 @@ class CronTools
             );
         } else {
             return false;
+        }
+    }
+
+    /*
+     * Set process name
+     * @param $name string - Process name
+     */
+    public static function setName($name)
+    {
+        if (function_exists("cli_set_process_title")) {
+            cli_set_process_title($name);
+        } elseif (function_exists("setproctitle")) {
+            setproctitle($name);
         }
     }
 }

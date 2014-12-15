@@ -1,14 +1,26 @@
 <?php
 abstract class CronEntries
 {
+    /*
+     * Regular expression to retrieve the parameters of the tasks
+     */
     const REGEXP = "/^(\*(\/\d+)?|([0-5]?\d)(-([0-5]?\d)(\/\d+)?)?(,([0-5]?\d)(-([0-5]?\d)(\/\d+)?)?)*)\s(\*(\/\d+)?|([01]?\d|2[0-3])(-([01]?\d|2[0-3])(\/\d+)?)?(,([01]?\d|2[0-3])(-([01]?\d|2[0-3])(\/\d+)?)?)*)\s(\*(\/\d+)?|(0?[1-9]|[12]\d|3[01])(-(0?[1-9]|[12]\d|3[01])(\/\d+)?)?(,(0?[1-9]|[12]\d|3[01])(-(0?[1-9]|[12]\d|3[01])(\/\d+)?)?)*)\s(\*(\/\d+)?|([1-9]|1[012])(-([1-9]|1[012])(\/\d+)?)?(,([1-9]|1[012])(-([1-9]|1[012])(\/\d+)?)?)*|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s(\*(\/\d+)?|([0-7])(-([0-7])(\/\d+)?)?(,([0-7])(-([0-7])(\/\d+)?)?)*|mon|tue|wed|thu|fri|sat|sun)\s(.*)$/";
 
+    /*
+     * A list of folders to be scanned
+     */
     private $arPath = array(
         "/../../tasks/"
     );
 
+    /*
+     * Task list
+     */
     public $tasks = array();
 
+    /*
+     * Additional parameters dates
+     */
     private $txtParams = array(
         "month" => array(
             'jan' => 1, 'feb' => 2, 'mar' => 3, 'apr' => 4,
@@ -26,6 +38,11 @@ abstract class CronEntries
         )
     );
 
+    /*
+     * Add folder to scan files
+     * @param $path string - The path to the folder
+     * @return int - Serial number of folders
+     */
     public function addPath($path = null)
     {
         if (!is_null($path) && !file_exists(dirname(__FILE__) . $path)
@@ -36,11 +53,22 @@ abstract class CronEntries
         return false;
     }
 
+    /*
+     * Get all the tasks
+     * @return array - Tasks and parameters
+     */
     public function getAll()
     {
         return $this->getEntries($this->getFile());
     }
 
+    /*
+     * Checking task
+     * @param $task array - Task parameters
+     * @param $id int - Task identifier
+     * @param $currentDate DateTime - The current date
+     * @return boolean - Verification result
+     */
     public function check($task, $id, $date)
     {
         foreach ($date as $type => $value) {
@@ -114,6 +142,11 @@ abstract class CronEntries
         return true;
     }
 
+    /*
+     * Get all the tasks
+     * @param $files array - Files for scanning
+     * @return array - Tasks and parameters
+     */
     private function getEntries($files)
     {
         if (isset($files) && count($files) > 0) {
@@ -149,6 +182,10 @@ abstract class CronEntries
         return false;
     }
 
+    /*
+     * Get a list of files with tasks
+     * @return array - List files
+     */
     private function getFile()
     {
         $result = array();
