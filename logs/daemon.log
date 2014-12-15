@@ -1,0 +1,2 @@
+2014-12-15 10:42:59 PID[4986]: CMD (php /var/www/data/public/cron/test.php test1)
+2014-12-15 10:44:00 PID[12907]: CMD (php /var/www/data/public/cron/test.php test1)
