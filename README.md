@@ -14,10 +14,7 @@ Download the archive and extract.
 wget https://github.com/dmamontov/crondaemon/archive/master.zip
 unzip master.zip
 ```
-<br>
 or
-<br>
-Run the following command in the console
 ```sh
 git-clone https://github.com/dmamontov/crondaemon.git
 ```
