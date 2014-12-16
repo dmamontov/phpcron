@@ -9,8 +9,14 @@ Cron Daemon is a daemon to run tasks scheduled cron written in php, works simila
 * All functions "**pcntl**" removed from the directive "**disable_functions**".
 
 ## Installation
-1. [Download the archive](https://github.com/dmamontov/crondaemon/archive/master.zip) and extract.
-2. Copy the folder "src" to the root of your project.
+[Download the archive](https://github.com/dmamontov/crondaemon/archive/master.zip) and extract.<br>
+or
+<br>
+Run the following command in the console
+```sh
+git-clone https://github.com/dmamontov/crondaemon.git
+```
+Copy the folder "src" to the root of your project.
 
 ## Entries cron
 Create an entry in the file tasks/main.cron analogously to Example
