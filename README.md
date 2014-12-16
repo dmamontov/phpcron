@@ -5,8 +5,8 @@ Cron Daemon is a daemon to run tasks scheduled crowns written in php, works simi
 
 ## Mandatory requirements
 * PHP version 5.0 or higher.
-* Module installed *"pcntl"*.
-* All functions *"pcntl"* removed from the directive "*disable_functions"*.
+* Module installed "pcntl".
+* All functions "pcntl" removed from the directive "disable_functions".
 
 ## Installation
 1. [Download the archive](https://github.com/dmamontov/crondaemon/archive/master.zip) and extract.
