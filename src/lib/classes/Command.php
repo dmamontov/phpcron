@@ -118,7 +118,7 @@ class Command
     public static function help()
     {
         echo "Usage example:\n";
-        echo "php cli.php parameter\n\n";
+        echo "php сrondaemon.php parameter\n\n";
         echo "Parameters:\n";
         echo "\tstart\t\tStart Daemon\n";
         echo "\tstop\t\tStop Daemon\n";
