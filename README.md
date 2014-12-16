@@ -9,7 +9,7 @@ Cron Daemon is a daemon to run tasks scheduled cron written in php, works simila
 * All functions "**pcntl**" removed from the directive "**disable_functions**".
 
 ## Installation
-[Download the archive](https://github.com/dmamontov/crondaemon/archive/master.zip) and extract.<br>
+Download the [archive](https://github.com/dmamontov/crondaemon/archive/master.zip) and extract.<br>
 or
 <br>
 Run the following command in the console
