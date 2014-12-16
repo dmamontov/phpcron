@@ -1,7 +1,7 @@
 Cron Daemon
 ===========
 
-Cron Daemon is a daemon to run tasks scheduled crowns written in php, works similar to crontab
+Cron Daemon is a daemon to run tasks scheduled cron written in php, works similar to crontab
 
 ## Requirements
 * PHP version **5.0** or **higher**.
