@@ -84,9 +84,6 @@ abstract class Entries
         ),
         'max' => array(
             'min' => 59, 'hour' => 23, 'day' => 31, 'month' => 12, 'dow' => 6
-        ),
-        'parent' => array(
-            'min' => 'hour', 'hour'  => 'day', 'day' => 'month', 'month' => 'year'
         )
     );
 
