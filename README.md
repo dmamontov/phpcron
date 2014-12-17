@@ -39,9 +39,10 @@ or
 /path/to/crondaemon parameter
 ```
 ### Valid parameters
-* start
+* start [-f]
 * stop
 * restart
+* status
 * help
 
 ## Connecting and starting the demon in your code
