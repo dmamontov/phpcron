@@ -78,35 +78,41 @@ class Tools
 
     /*
      * Formatting Dates
-     * @param $date DateTime - Date
+     * @param $date int - Date
      * @return array - The formatted date
      */
     public static function formatDateTime($date)
     {
-        if ($date instanceof DateTime) {
-            return array(
-                "min"   => intval($date->format("i")),
-                "hour"  => intval($date->format("H")),
-                "day"   => intval($date->format("j")),
-                "month" => intval($date->format("n")),
-                "dow"   => intval($date->format("w")),
-                "year"  => intval($date->format("Y"))
-            );
-        } else {
-            return false;
-        }
+        return array(
+            "min"   => intval(date("i", $date)),
+            "hour"  => intval(date("H", $date)),
+            "day"   => intval(date("j", $date)),
+            "month" => intval(date("n", $date)),
+            "dow"   => intval(date("w", $date)),
+            "year"  => intval(date("Y", $date))
+        );
     }
 
     /*
-     * Set process name
-     * @param $name string - Process name
+     * The timing of the next run
+     * @param $task array - Task parameters
+     * @param $time int - Date
+     * @return int - The number of seconds for the next run
      */
-    public static function setName($name)
+    public static function setSleep($task, $time)
     {
-        if (function_exists("cli_set_process_title")) {
-            cli_set_process_title($name);
-        } elseif (function_exists("setproctitle")) {
-            setproctitle($name);
+        if ($task['min'] != '*') {
+            return ($time + 60 - ($time % 3600) % (60)) - $time;
+        } elseif($task['hour'] != '*') {
+            return ($time + 3600 - ($time % 3600) % (60)) - $time;
+        } elseif ($task['day'] != '*') {
+            return (strtotime('+1 day', $time) - ($time % 3600) % (60)) - $time;
+        } elseif ($task['month'] != '*') {
+            return (strtotime('+1 month', $time) - ($time % 3600) % (60)) - $time;
+        } elseif ($task['dow'] != '*') {
+            return (strtotime('+1 week', $time) - ($time % 3600) % (60)) - $time;
+        } else {
+            return 0;
         }
     }
 }

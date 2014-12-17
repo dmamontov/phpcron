@@ -62,7 +62,7 @@ abstract class Entries
      * A list of folders to be scanned
      */
     private $arPath = array(
-        "/../../tasks/"
+        '/../../tasks/'
     );
 
     /*
@@ -74,19 +74,19 @@ abstract class Entries
      * Additional parameters dates
      */
     private $txtParams = array(
-        "month" => array(
+        'month' => array(
             'jan' => 1, 'feb' => 2, 'mar' => 3, 'apr' => 4,
             'may' => 5, 'jun' => 6, 'jul' => 7, 'aug' => 8,
             'sep' => 9, 'oct' => 10, 'nov' => 11, 'dec' => 12
         ),
-        "dow" => array(
+        'dow' => array(
             'sun' => 0, 'mon' => 1, 'tue' => 2, 'wed' => 3, 'thu' => 4, 'fri' => 5, 'sat' => 6
         ),
-        "max" => array(
-            "min" => 59, "hour" => 23, "day" => 31, "month" => 12, "dow" => 6
+        'max' => array(
+            'min' => 59, 'hour' => 23, 'day' => 31, 'month' => 12, 'dow' => 6
         ),
-        "parent" => array(
-            "min" => "hour", "hour"  => "day", "day" => "month", "month" => "year"
+        'parent' => array(
+            'min' => 'hour', 'hour'  => 'day', 'day' => 'month', 'month' => 'year'
         )
     );
 
@@ -123,78 +123,62 @@ abstract class Entries
      */
     public function check($task, $id, $date)
     {
+        $date = Tools::formatDateTime($date);
         foreach ($date as $type => $value) {
-            if ($type == "year") {
+            if ($type == 'year') {
                 continue;
             }
 
-            if (($type == "month" || $type == "dow") && is_string($task[ $type ])
+            if (($type == 'month' || $type == 'dow') && is_string($task[ $type ])
                     && array_key_exists($task[ $type ], $this->txtParams[ $type ])) {
                 $task[ $type ] = $this->txtParams[ $type ][ $task[ $type ] ];
             }
 
             // example: *
-            if ($task[ $type ] == "*") {
+            if ($task[ $type ] == '*') {
                 continue;
             }
 
             // example: 23
-            if (is_numeric($task[ $type ]) && (int) $task[ $type ] <= $this->txtParams["max"][ $type ]
+            if (is_numeric($task[ $type ]) && (int) $task[ $type ] <= $this->txtParams['max'][ $type ]
                     && $value == (int) $task[ $type ]) {
-                if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ])
-                       && (!isset($this->txtParams["parent"][ $type ])
-                       || $this->lastRun[ $id ][ $this->txtParams["parent"][ $type ] ]
-                       != $date[ $this->txtParams["parent"][ $type ] ]))) {
-                    continue;
-                }
+                continue;
             }
     
             // example: */15
             if (preg_match("/^\*\/(\d+)$/", $task[ $type ], $out)) {
-                if (is_numeric($out[1]) && (int) $out[1] <= $this->txtParams["max"][ $type ]
+                if (is_numeric($out[1]) && (int) $out[1] <= $this->txtParams['max'][ $type ]
                         && ($value % (int) $out[1]) == 0) {
-                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ])
-                            && $this->lastRun[ $id ][ $type ] != $value)) {
-                        continue;
-                    }
+                    continue;
                 }
             }
     
             // example: 5-15
             if (preg_match("/^(\d+)\-(\d+)$/", $task[ $type ], $out)) {
-                if (is_numeric($out[1]) && is_numeric($out[2]) && (int) $out[1] <= $this->txtParams["max"][ $type ]
-                        && $out[2] <= $this->txtParams["max"][ $type ] && $out[2] > $out[1] && $value >= $out[1]
+                if (is_numeric($out[1]) && is_numeric($out[2]) && (int) $out[1] <= $this->txtParams['max'][ $type ]
+                        && $out[2] <= $this->txtParams['max'][ $type ] && $out[2] > $out[1] && $value >= $out[1]
                         && $value <= $out[2]) {
-                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ])
-                            && $this->lastRun[ $id ][ $type ] != $value)) {
-                        continue;
-                    }
+                    continue;
                 }
             }
     
             // example: 5-15/2
             if (preg_match("/^(\d+)\-(\d+)\/(\d+)$/", $task[ $type ], $out)) {
                 if (is_numeric($out[1]) && is_numeric($out[2]) && is_numeric($out[3])
-                        && (int) $out[1] <= $this->txtParams["max"][ $type ]
-                        && $out[2] <= $this->txtParams["max"][ $type ] && $out[3] <= $this->txtParams["max"][ $type ]
+                        && (int) $out[1] <= $this->txtParams['max'][ $type ]
+                        && $out[2] <= $this->txtParams['max'][ $type ] && $out[3] <= $this->txtParams['max'][ $type ]
                         && $out[2] > $out[1] && $value >= $out[1] && $value <= $out[2]
                         && ($value % (int) $out[3]) == 0) {
-                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ])
-                            && $this->lastRun[ $id ][ $type ] != $value)) {
                         continue;
-                    }
                 }
             }
     
             // example: 5,7,12
-            $out = explode(",", $task[ $type ]);
+            $out = explode(',', $task[ $type ]);
             if (count($out) > 1 && in_array($value, $out)) {
                 $key = array_search($value, $out);
-                if (is_numeric($out[ $key ]) && (int) $out[ $key ] <= $this->txtParams["max"][ $type ]) {
-                    if (!isset($this->lastRun[ $id ]) || (isset($this->lastRun[ $id ])
-                            && $this->lastRun[ $id ][ $type ] != $value)) {
+                if (is_numeric($out[ $key ]) && (int) $out[ $key ] <= $this->txtParams['max'][ $type ]) {
                         continue;
-                    }
                 }
             }
     
@@ -221,15 +205,15 @@ abstract class Entries
                 foreach ($lines as $line) {
                     if (preg_match(self::REGEXP, trim($line), $params)) {
                         $param = array(
-                                     "min"   => $params[1],
-                                     "hour"  => $params[12],
-                                     "day"   => $params[23],
-                                     "month" => $params[34],
-                                     "dow"   => $params[45],
-                                     "cmd"   => $params[56]
+                                     'min'   => $params[1],
+                                     'hour'  => $params[12],
+                                     'day'   => $params[23],
+                                     'month' => $params[34],
+                                     'dow'   => $params[45],
+                                     'cmd'   => $params[56]
                                  );
                         $countParams = array_count_values($param);
-                        if (!isset($countParams["*"]) || ($countParams["*"] < 5 && $param["cmd"] != "*")) {
+                        if (!isset($countParams['*']) || ($countParams['*'] < 5 && $param['cmd'] != '*')) {
                             array_push($result, $param);
                         }
                     }
@@ -251,7 +235,7 @@ abstract class Entries
     private function getFile()
     {
         $result = array();
-        $not = array(".", "..");
+        $not = array('.', '..');
 
         $dir = dirname(__FILE__);
 
@@ -262,7 +246,7 @@ abstract class Entries
                     if (in_array($file, $not)) {
                         continue;
                     }
-                    if (!is_dir($dir . $path . $file) && stripos($file, ".cron")) {
+                    if (!is_dir($dir . $path . $file) && stripos($file, '.cron')) {
                         array_push($result, $dir . $path . $file);
                     }
                 }

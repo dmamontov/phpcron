@@ -22,7 +22,7 @@
  *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
  * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
  * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
@@ -79,19 +79,9 @@ class CronDaemon extends Entries implements DaemonInterface
     protected $debug = false;
 
     /*
-     * The maximum number of running processes
+     * Current directory
      */
-    public $maxProcesses;
-
-    /*
-     * Shared variable
-     */
-    const STATUS = 1;
-
-    /*
-     * The unique identifier of the memory block
-     */
-    private $shmId;
+    private $dir;
 
     /*
      * Class constructor
@@ -99,12 +89,12 @@ class CronDaemon extends Entries implements DaemonInterface
      */
     public function __construct($arg = array())
     {
-        Command::run($arg, __FILE__);
-
         if (!extension_loaded('pcntl')) {
-            echo "Starting the daemon can not: Do not set the library \"pcntl\"";
+            echo 'Starting the daemon can not: Do not set the library "pcntl"';
             exit();
         }
+
+        Process::run($arg);
 
         if (version_compare(phpversion(), '5.3.0', '>=')) {
             pcntl_signal_dispatch();
@@ -112,29 +102,34 @@ class CronDaemon extends Entries implements DaemonInterface
             declare(ticks=1);
         }
 
-        $this->shmId = shm_attach(ftok(__FILE__, 'A'));
+        $this->dir = dirname(__FILE__);
+        $this->settings = parse_ini_file(strtr('*/../../config/settings.ini', array('*' => $this->dir)), true);
 
-        $dir = dirname(__FILE__);
-        $this->settings = parse_ini_file($dir . "/../../config/settings.ini", true);
-
-        if ($this->settings['general']['debug'] == "") {
-            ini_set('error_log', $dir . '/../../logs/' . $this->settings['logs']['error']);
+        if ($this->settings['general']['debug'] == '') {
+            ini_set('error_log', strtr('*/../../logs/#', array(
+                                                            '*' => $this->dir,
+                                                            '#' => $this->settings['logs']['error']
+                                                         )));
             fclose(STDIN);
             fclose(STDOUT);
             fclose(STDERR);
             $STDIN = fopen('/dev/null', 'r');
-            $STDOUT = fopen($dir . '/../../logs/' . $this->settings['logs']['application'], 'ab');
-            $STDERR = fopen($dir . '/../../logs/' . $this->settings['logs']['error'], 'ab');
+            $STDOUT = fopen(strtr('*/../../logs/#', array(
+                                                            '*' => $this->dir,
+                                                            '#' => $this->settings['logs']['application']
+                                                         )), 'ab');
+            $STDERR = fopen(strtr('*/../../logs/#', array(
+                                                            '*' => $this->dir,
+                                                            '#' => $this->settings['logs']['error']
+                                                         )), 'ab');
         } else {
             $this->debug = true;
         }
 
         $this->getAll();
 
-        $this->maxProcesses = $this->settings['general']['max_processes'];
-
-        pcntl_signal(SIGTERM, array($this, "childSignalHandler"));
-        pcntl_signal(SIGCHLD, array($this, "childSignalHandler"));
+        pcntl_signal(SIGTERM, array($this, 'childSignalHandler'));
+        pcntl_signal(SIGCHLD, array($this, 'childSignalHandler'));
     }
 
     /*
@@ -148,15 +143,18 @@ class CronDaemon extends Entries implements DaemonInterface
         } elseif ($pid) {
             exit();
         } elseif (is_array($this->tasks) && count($this->tasks) > 0) {
-            Tools::setName("cron-daemon");
+            file_put_contents(strtr('*/../../crondaemon.pid', array('*' => $this->dir)), getmypid());
 
             while (!$this->stopServer) {
                 foreach ($this->tasks as $key => $task) {
-                    while (count($this->currentTask) >= $this->maxProcesses
-                              || count($this->currentTask) >= count($this->tasks)) {
+                    while (count($this->currentTask) >= count($this->tasks)) {
                         sleep(1);
                     }
-                    $this->launchTask($task, $key, new DateTime());
+                    if (in_array($key, $this->currentTask)) {
+                        continue;
+                    } else {
+                        $this->launchTask($task, $key);
+                    }
                 }
             }
         }
@@ -167,26 +165,27 @@ class CronDaemon extends Entries implements DaemonInterface
      * Execution of tasks
      * @param $task array - Task parameters
      * @param $id int - Task identifier
-     * @param $currentDate DateTime - The current date
      */
-    protected function launchTask($task, $id, $currentDate)
+    protected function launchTask($task, $id)
     {
         $debugParams = array();
         $pid = pcntl_fork();
-        $currentDate = Tools::formatDateTime($currentDate);
 
         if ($pid == -1) {
             return false;
-        } elseif ($pid && $currentDate !== false) {
-            $this->currentTask[ $pid ] = true;
-            $this->lastRun[ $id ] = $currentDate;
-            if (shm_has_var($this->shmId, self::STATUS) && !shm_get_var($this->shmId, self::STATUS)) {
-                $this->stopServer = true;
-            }
+        } elseif ($pid) {
+            $this->currentTask[ $pid ] = $id;
         } else {
-            if ($currentDate !== false && $this->check($task, $id, $currentDate)) {
-                exec($task["cmd"]);
-                Tools::logger('daemon', array('cmd' => $task["cmd"]), $this->settings);
+            while (!$this->stopServer) {
+                $time = time();
+                if ($this->check($task, $id, $time)) {
+                    exec($task['cmd']);
+                    Tools::logger('daemon', array('cmd' => $task['cmd']), $this->settings);
+                    sleep(Tools::setSleep($task, $time));
+                    exit();
+                } else {
+                    sleep(Tools::setSleep($task, $time));
+                }
             }
             exit();
         }
@@ -205,6 +204,9 @@ class CronDaemon extends Entries implements DaemonInterface
         switch ($signo) {
             case SIGTERM:
                 $this->stopServer = true;
+                if (file_exists(strtr('*/../../crondaemon.pid', array('*' => $this->dir)))) {
+                    unlink(strtr('*/../../crondaemon.pid', array('*' => $this->dir)));
+                }
                 break;
             case SIGCHLD:
                 if (!$pid) {

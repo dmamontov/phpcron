@@ -42,7 +42,7 @@
  */
 
 /**
- * Command - Processing parameters to be passed CronDaemon
+ * Process - Processing parameters to be passed CronDaemon
  *
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2014 Dmitry Mamontov <d.slonyara@gmail.com>
@@ -51,27 +51,29 @@
  * @link      https://github.com/dmamontov/crondaemon/blob/master/src/lib/classes/Command.php
  * @since     Class available since Release 1.0.0
  */
-class Command
+class Process
 {
-    /*
-     * Shared variable
-     */
-    const STATUS = 1;
-
+    public static $file = false;
     /*
      * Running Commands
      * @param $arg array - Console argument
-     * @param $file __FILE__
      */
-    public function run($arg, $file)
+    public function run($arg)
     {
+        self::$file = strtr('*/../../crondaemon.pid', array('*' => dirname(__FILE__)));
         switch ($arg[1]) {
             case "restart":
             case "start":
-                self::start($file);
+                if (!isset($arg[2])) {
+                    $arg[2] = false;
+                }
+                self::start($arg[2]);
                 break;
             case "stop":
-                self::stop($file);
+                self::stop();
+                break;
+            case "status":
+                self::status();
                 break;
             case "help":
             default:
@@ -82,33 +84,53 @@ class Command
 
     /*
      * Command start
-     * @param $file __FILE__
      */
-    public static function start($file)
+    public static function start($flag)
     {
-        $shmId = shm_attach(ftok($file, 'A'));
-
-        if (shm_has_var($shmId, self::STATUS) && shm_get_var($shmId, self::STATUS)) {
-            shm_put_var($shmId, 1, false);
-            sleep(1);
-            shm_put_var($shmId, 1, true);
-        } else {
-            shm_put_var($shmId, 1, true);
+        if ($flag == "-f") {
+            self::forcedStop();
+        } elseif (file_exists(self::$file)) {
+            echo strtr("Daemon * is running\n", array('*' => file_get_contents(self::$file)));
+            exit();
         }
     }
 
     /*
      * Command stop
-     * @param $file __FILE__
      */
-    public static function stop($file)
+    public static function stop()
     {
-        $shmId = shm_attach(ftok($file, 'A'));
-    
-        if (shm_has_var($shmId, self::STATUS) && shm_get_var($shmId, self::STATUS)) {
-            shm_put_var($shmId, 1, false);
+        self::forcedStop();
+        exit();
+    }
+
+    /*
+     * Forced stop
+     */
+    public static function forcedStop()
+    {
+        exec("ps -e | grep 'php$'", $out);
+        foreach ($out as $key => $line) {
+            if (preg_match("/^\s(\d+)\s.*$/", $line, $pid)) {
+                if ($pid[1] == getmypid()) {
+                    continue;
+                }
+                posix_kill($pid[1], SIGCHLD);
+                posix_kill($pid[1], SIGTERM);
+            }
         }
-        sleep(1);
+    }
+
+    /*
+     * Command status
+     */
+    public static function status()
+    {
+        if (file_exists(self::$file)) {
+            echo strtr("Daemon * is running\n", array('*' => file_get_contents(self::$file)));
+        } else {
+            echo "Daemon is not running\n";
+        }
         exit();
     }
 
@@ -118,11 +140,12 @@ class Command
     public static function help()
     {
         echo "Usage example:\n";
-        echo "php сrondaemon.php parameter\n\n";
+        echo "php crondaemon.php parameter\n\n";
         echo "Parameters:\n";
         echo "\tstart\t\tStart Daemon\n";
         echo "\tstop\t\tStop Daemon\n";
         echo "\trestart\t\tRestart Daemon\n";
+        echo "\tstatus\t\tStatus Daemon\n";
         echo "\thelp\t\tHelp\n";
         exit();
     }
