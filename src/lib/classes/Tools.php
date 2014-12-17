@@ -103,7 +103,7 @@ class Tools
     {
         if ($task['min'] != '*') {
             return ($time + 60 - ($time % 3600) % (60)) - $time;
-        } elseif($task['hour'] != '*') {
+        } elseif ($task['hour'] != '*') {
             return ($time + 3600 - ($time % 3600) % (60)) - $time;
         } elseif ($task['day'] != '*') {
             return (strtotime('+1 day', $time) - ($time % 3600) % (60)) - $time;

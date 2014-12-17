@@ -99,7 +99,7 @@ class CronDaemon extends Entries implements DaemonInterface
         if (version_compare(phpversion(), '5.3.0', '>=')) {
             pcntl_signal_dispatch();
         } else {
-            declare(ticks=1);
+            declare (ticks=1);
         }
 
         $this->dir = dirname(__FILE__);

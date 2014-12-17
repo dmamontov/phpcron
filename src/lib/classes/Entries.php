@@ -169,7 +169,7 @@ abstract class Entries
                         && $out[2] <= $this->txtParams['max'][ $type ] && $out[3] <= $this->txtParams['max'][ $type ]
                         && $out[2] > $out[1] && $value >= $out[1] && $value <= $out[2]
                         && ($value % (int) $out[3]) == 0) {
-                        continue;
+                    continue;
                 }
             }
     
@@ -178,7 +178,7 @@ abstract class Entries
             if (count($out) > 1 && in_array($value, $out)) {
                 $key = array_search($value, $out);
                 if (is_numeric($out[ $key ]) && (int) $out[ $key ] <= $this->txtParams['max'][ $type ]) {
-                        continue;
+                    continue;
                 }
             }
     
