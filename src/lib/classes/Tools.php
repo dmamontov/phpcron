@@ -107,10 +107,10 @@ class Tools
             return ($time + 3600 - ($time % 3600) % (60)) - $time;
         } elseif ($task['day'] != '*') {
             return (strtotime('+1 day', $time) - ($time % 3600) % (60)) - $time;
-        } elseif ($task['month'] != '*') {
-            return (strtotime('+1 month', $time) - ($time % 3600) % (60)) - $time;
         } elseif ($task['dow'] != '*') {
             return (strtotime('+1 week', $time) - ($time % 3600) % (60)) - $time;
+        } elseif ($task['month'] != '*') {
+            return (strtotime('+1 month', $time) - ($time % 3600) % (60)) - $time;
         } else {
             return 0;
         }
