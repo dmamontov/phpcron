@@ -64,11 +64,6 @@ class CronDaemon extends Entries implements DaemonInterface
     protected $currentTask = array();
 
     /*
-     * Running tasks
-     */
-    protected $lastRun = array();
-
-    /*
      * Debug mode
      */
     public $settings = array();
