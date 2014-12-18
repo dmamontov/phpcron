@@ -88,8 +88,7 @@ class Tools
             "hour"  => intval(date("H", $date)),
             "day"   => intval(date("j", $date)),
             "month" => intval(date("n", $date)),
-            "dow"   => intval(date("w", $date)),
-            "year"  => intval(date("Y", $date))
+            "dow"   => intval(date("w", $date))
         );
     }
 
