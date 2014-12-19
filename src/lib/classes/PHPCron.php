@@ -1,6 +1,6 @@
 <?php
 /**
- * crondaemon
+ * phpcron
  *
  * Copyright (c) 2014, Dmitry Mamontov <d.slonyara@gmail.com>.
  * All rights reserved.
@@ -34,7 +34,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package   crondaemon
+ * @package   phpcron
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2014 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
@@ -42,16 +42,16 @@
  */
 
 /**
- * CronDaemon - The main class
+ * PHPCron - The main class
  *
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2014 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @version   Release: @package_version@
- * @link      https://github.com/dmamontov/crondaemon/blob/master/src/lib/classes/CronDaemon.php
+ * @link      https://github.com/dmamontov/crondaemon/blob/master/src/lib/classes/PHPCron.php
  * @since     Class available since Release 1.0.0
  */
-class CronDaemon extends Entries implements DaemonInterface
+class PHPCron extends Entries implements PHPCronInterface
 {
     /*
      * Exit status of the parent process
@@ -62,6 +62,11 @@ class CronDaemon extends Entries implements DaemonInterface
      * Running tasks
      */
     protected $currentTask = array();
+
+    /*
+     * Running tasks
+     */
+    protected $lastRun = array();
 
     /*
      * Debug mode

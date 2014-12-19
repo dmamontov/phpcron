@@ -1,5 +1,0 @@
-#!/usr/bin/php
-
-<?php
-    require_once 'crondaemon.php';
-?>

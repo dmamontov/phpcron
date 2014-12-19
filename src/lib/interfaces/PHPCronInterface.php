@@ -1,6 +1,6 @@
 <?php
 /**
- * crondaemon
+ * phpcron
  *
  * Copyright (c) 2014, Dmitry Mamontov <d.slonyara@gmail.com>.
  * All rights reserved.
@@ -34,13 +34,39 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package   crondaemon
+ * @package   phpcron
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2014 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @since     File available since Release 1.0.0
  */
-require_once 'lib/Autoloader.php';
-Autoloader::register();
-$cron = new CronDaemon($argv);
-$cron->run();
+
+/**
+ * @author    Dmitry Mamontov <d.slonyara@gmail.com>
+ * @copyright 2014 Dmitry Mamontov <d.slonyara@gmail.com>
+ * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
+ * @version   Release: @package_version@
+ * @link      https://github.com/dmamontov/crondaemon/blob/master/src/lib/interfaces/PHPCronInterface.php
+ * @since     Class available since Release 1.0.0
+ */
+interface PHPCronInterface
+{
+    /*
+     * Class constructor
+     * @param $arg array - Argument daemon
+     */
+    public function __construct($arg);
+
+    /*
+     * Running tasks
+     */
+    public function run();
+
+    /*
+     * Signal processing process
+     * @param $signo int - The type of signal completion
+     * @param $pid int - Process ID
+     * @param $status int - The status of the process
+     */
+    public function childSignalHandler($signo, $pid = null, $status = null);
+}

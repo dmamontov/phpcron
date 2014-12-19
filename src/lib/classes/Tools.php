@@ -1,6 +1,6 @@
 <?php
 /**
- * crondaemon
+ * phpcron
  *
  * Copyright (c) 2014, Dmitry Mamontov <d.slonyara@gmail.com>.
  * All rights reserved.
@@ -34,7 +34,7 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package   crondaemon
+ * @package   phpcron
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2014 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
@@ -88,7 +88,8 @@ class Tools
             "hour"  => intval(date("H", $date)),
             "day"   => intval(date("j", $date)),
             "month" => intval(date("n", $date)),
-            "dow"   => intval(date("w", $date))
+            "dow"   => intval(date("w", $date)),
+            "year"  => intval(date("Y", $date))
         );
     }
 
