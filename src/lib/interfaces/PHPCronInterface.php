@@ -46,7 +46,7 @@
  * @copyright 2014 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @version   Release: @package_version@
- * @link      https://github.com/dmamontov/crondaemon/blob/master/src/lib/interfaces/PHPCronInterface.php
+ * @link      https://github.com/dmamontov/phpcron/blob/master/src/lib/interfaces/PHPCronInterface.php
  * @since     Class available since Release 1.0.0
  */
 interface PHPCronInterface
