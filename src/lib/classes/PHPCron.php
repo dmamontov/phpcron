@@ -48,7 +48,7 @@
  * @copyright 2014 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @version   Release: @package_version@
- * @link      https://github.com/dmamontov/crondaemon/blob/master/src/lib/classes/PHPCron.php
+ * @link      https://github.com/dmamontov/phpcron/blob/master/src/lib/classes/PHPCron.php
  * @since     Class available since Release 1.0.0
  */
 class PHPCron extends Entries implements PHPCronInterface
@@ -143,7 +143,7 @@ class PHPCron extends Entries implements PHPCronInterface
         } elseif ($pid) {
             exit();
         } elseif (is_array($this->tasks) && count($this->tasks) > 0) {
-            file_put_contents(strtr('*/../../crondaemon.pid', array('*' => $this->dir)), getmypid());
+            file_put_contents(strtr('*/../../phpcron.pid', array('*' => $this->dir)), getmypid());
 
             while (!$this->stopServer) {
                 foreach ($this->tasks as $key => $task) {
@@ -204,8 +204,8 @@ class PHPCron extends Entries implements PHPCronInterface
         switch ($signo) {
             case SIGTERM:
                 $this->stopServer = true;
-                if (file_exists(strtr('*/../../crondaemon.pid', array('*' => $this->dir)))) {
-                    unlink(strtr('*/../../crondaemon.pid', array('*' => $this->dir)));
+                if (file_exists(strtr('*/../../phpcron.pid', array('*' => $this->dir)))) {
+                    unlink(strtr('*/../../phpcron.pid', array('*' => $this->dir)));
                 }
                 break;
             case SIGCHLD:

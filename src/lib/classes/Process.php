@@ -42,13 +42,13 @@
  */
 
 /**
- * Process - Processing parameters to be passed CronDaemon
+ * Process - Processing parameters to be passed phpcron
  *
  * @author    Dmitry Mamontov <d.slonyara@gmail.com>
  * @copyright 2014 Dmitry Mamontov <d.slonyara@gmail.com>
  * @license   http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @version   Release: @package_version@
- * @link      https://github.com/dmamontov/crondaemon/blob/master/src/lib/classes/Command.php
+ * @link      https://github.com/dmamontov/phpcron/blob/master/src/lib/classes/Command.php
  * @since     Class available since Release 1.0.0
  */
 class Process
@@ -60,7 +60,7 @@ class Process
      */
     public function run($arg)
     {
-        self::$file = strtr('*/../../crondaemon.pid', array('*' => dirname(__FILE__)));
+        self::$file = strtr('*/../../phpcron.pid', array('*' => dirname(__FILE__)));
         switch ($arg[1]) {
             case "restart":
             case "start":
@@ -90,7 +90,7 @@ class Process
         if ($flag == "-f") {
             self::forcedStop();
         } elseif (file_exists(self::$file)) {
-            echo strtr("Daemon * is running\n", array('*' => file_get_contents(self::$file)));
+            echo strtr("PHPCron * is running\n", array('*' => file_get_contents(self::$file)));
             exit();
         }
     }
@@ -109,15 +109,18 @@ class Process
      */
     public static function forcedStop()
     {
-        exec("ps -e | grep 'php$'", $out);
-        foreach ($out as $key => $line) {
-            if (preg_match("/^\s(\d+)\s.*$/", $line, $pid)) {
-                if ($pid[1] == getmypid()) {
-                    continue;
-                }
-                posix_kill($pid[1], SIGCHLD);
-                posix_kill($pid[1], SIGTERM);
+        if (file_exists(self::$file)) {
+            $pid = file_get_contents(self::$file);
+            exec(strtr("ps o pid --ppid *", array('*' => $pid)), $out);
+            array_push($out, $pid);
+            unset($out[0]);
+            foreach ($out as $line) {
+                posix_kill(trim($line), SIGCHLD);
+                posix_kill(trim($line), SIGTERM);
             }
+        } else {
+            echo "PHPCron is not running\n";
+            exit();
         }
     }
 
@@ -127,9 +130,9 @@ class Process
     public static function status()
     {
         if (file_exists(self::$file)) {
-            echo strtr("Daemon * is running\n", array('*' => file_get_contents(self::$file)));
+            echo strtr("PHPCron * is running\n", array('*' => file_get_contents(self::$file)));
         } else {
-            echo "Daemon is not running\n";
+            echo "PHPCron is not running\n";
         }
         exit();
     }
@@ -140,7 +143,7 @@ class Process
     public static function help()
     {
         echo "Usage example:\n";
-        echo "php crondaemon.php parameter\n\n";
+        echo "php phpcron.php parameter\n\n";
         echo "Parameters:\n";
         echo "\tstart\t\tStart Daemon\n";
         echo "\tstop\t\tStop Daemon\n";
