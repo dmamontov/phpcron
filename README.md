@@ -4,7 +4,7 @@ PHPCron
 PHPCron is a daemon to run tasks scheduled cron written in php, works similar to crontab
 
 ## Requirements
-* PHP version **5.0** or **higher**.
+* PHP version **5.1** or **higher**.
 * Module installed "**pcntl**" and "**posix**".
 * All functions "**pcntl**" and "**posix**" removed from the directive "**disable_functions**".
 
