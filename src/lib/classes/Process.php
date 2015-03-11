@@ -75,6 +75,9 @@ class Process
             case "status":
                 self::status();
                 break;
+            case "import":
+                self::import();
+                break;
             case "help":
             default:
                 self::help();
@@ -104,6 +107,14 @@ class Process
         exit();
     }
 
+
+	/*
+     * Import crontab
+     */
+    public static function import()
+    {
+        exec("crontab -l > /../../tasks/crontab.cron");
+    }
     /*
      * Forced stop
      */
@@ -149,6 +160,7 @@ class Process
         echo "\tstop\t\tStop Daemon\n";
         echo "\trestart\t\tRestart Daemon\n";
         echo "\tstatus\t\tStatus Daemon\n";
+        echo "\timport\t\tImport crontab\n";
         echo "\thelp\t\tHelp\n";
         exit();
     }
